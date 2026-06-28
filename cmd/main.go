@@ -1,0 +1,76 @@
+package main
+
+import (
+	"fmt"
+	"net"
+)
+
+func main() {
+	conn, err := net.Dial("tcp", "127.0.0.1:9000")
+	if err != nil {
+		fmt.Println("Connection failed")
+		return
+	}
+	defer conn.Close()
+	fmt.Println("connect succesfully")
+
+	packet := []byte{
+		0x00, 0x00, 0x00, 0x1E, // Length = 26
+		'A', // Message Type
+
+		0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x01, // OrderID = 1
+
+		0x00, 0x00, 0x1D, 0x4C, // Price = 5000
+
+		0x00, 0x00, 0x00, 0x64, // Qty = 100
+
+		'B', // Buy
+
+		'G', 'P', ' ', ' ', ' ', ' ', ' ', ' ',
+	}
+	packet2 := []byte{
+		0x00, 0x00, 0x00, 0x1E, // Length = 26
+		'B', // Message Type
+
+		0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x02, // OrderID = 1
+
+		0x00, 0x00, 0x1D, 0x4C, // Price = 5000
+
+		0x00, 0x00, 0x00, 0x64, // Qty = 100
+
+		'B', // Buy
+
+		'B', 'L', ' ', ' ', ' ', ' ', ' ', ' ',
+	}
+	packet3 := []byte{
+		0x00, 0x00, 0x00, 0x1E, // Length = 26
+		'C', // Message Type
+
+		0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x03, // OrderID = 1
+
+		0x00, 0x00, 0x1D, 0x4C, // Price = 5000
+
+		0x00, 0x00, 0x00, 0x64, // Qty = 100
+
+		'Z', // Buy
+
+		'D', 'X', ' ', ' ', ' ', ' ', ' ', ' ',
+	}
+	cancelPacket := []byte{
+
+		0x00, 0x00, 0x00, 0x0D,
+
+		'X',
+
+		0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x02,
+	}
+	conn.Write([]byte(packet))
+	conn.Write([]byte(packet2))
+	conn.Write([]byte(packet3))
+	conn.Write([]byte(cancelPacket))
+
+}
