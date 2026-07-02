@@ -24,7 +24,7 @@ func main() {
 			fmt.Printf("Packet read error: %T : %v\n", err, err)
 			return
 		}
-		fmt.Printf("RX: % X\n", packet)
+		// fmt.Printf("RX: % X\n", packet)
 		protocol.HandlePacket(packet)
 	}
 }

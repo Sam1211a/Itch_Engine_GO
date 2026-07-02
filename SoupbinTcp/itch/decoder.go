@@ -4,51 +4,49 @@ import (
 	"encoding/binary"
 	"fmt"
 	"soupbintcp/model"
-	"strings"
 )
 
-func ReadString(b []byte) string {
-	return strings.TrimRight(string(b), " ")
-}
-func Read_uint_32(b []byte) uint32 {
-	return binary.BigEndian.Uint32(b)
-}
+// func ReadString(b []byte) string {
+// 	return strings.TrimRight(string(b), " ")
+// }
+// func Read_uint_32(b []byte) uint32 {
+// 	return binary.BigEndian.Uint32(b)
+// }
 
 func DecodeSecurityDirectory(msg []byte) {
 	s := model.SecurityDirectory{}
 	s.MessageType = msg[0]
-	s.Timestamp = binary.BigEndian.Uint32(msg[1:5])
+	s.Timestamp = ReadUint32(msg[1:5])
+	// DecodeTime(msg[0:5])
 	s.Orderbook = binary.BigEndian.Uint32(msg[5:9])
 
 	s.PriceType = msg[9]
 
-	s.ISIN = strings.TrimSpace(string(msg[10:22]))
-	s.SecurityCode = strings.TrimSpace(string(msg[22:34]))
+	s.ISIN = ReadString(msg[10:22])
+	s.SecurityCode = ReadString(msg[22:34])
+	s.Currency = ReadString(msg[34:37])
+	s.Group = ReadString(msg[37:45])
 
-	s.Currency = strings.TrimSpace(string(msg[34:37]))
-	s.Group = strings.TrimSpace(string(msg[37:45]))
+	s.MinimumQuantity = ReadUint64(msg[45:53])
+	s.QuantityTableID = ReadUint32(msg[53:57])
+	s.PriceTableID = ReadUint32(msg[57:61])
+	s.PriceDecimals = ReadUint32(msg[61:65])
 
-	s.MinimumQuantity = binary.BigEndian.Uint64(msg[45:53])
-
-	s.QuantityTableID = binary.BigEndian.Uint32(msg[53:57])
-	s.PriceTableID = binary.BigEndian.Uint32(msg[57:61])
-	s.PriceDecimals = binary.BigEndian.Uint32(msg[61:65])
-
-	s.DelistingDate = binary.BigEndian.Uint32(msg[65:69])
-	s.DelistingTime = binary.BigEndian.Uint32(msg[69:73])
+	s.DelistingDate = ReadUint32(msg[65:69])
+	s.DelistingTime = ReadUint32(msg[69:73])
 
 	s.MarketType = msg[73]
 
-	s.CompanyID = binary.BigEndian.Uint32(msg[74:78])
+	s.CompanyID = ReadUint32(msg[74:78])
 
 	s.ListingType = msg[78]
 
-	s.Sector = strings.TrimSpace(string(msg[79:91]))
-	s.Instrument = strings.TrimSpace(string(msg[91:103]))
+	s.Sector = ReadString(msg[79:91])
+	s.Instrument = ReadString(msg[91:103])
 
-	s.SecurityName = strings.TrimSpace(string(msg[103:163]))
+	s.SecurityName = ReadString(msg[103:163])
 
-	s.MaturityDate = binary.BigEndian.Uint32(msg[163:167])
+	s.MaturityDate = ReadUint32(msg[163:167])
 
 	// fmt.Printf("Timestamp: %+v\n", msg[1:5])
 	fmt.Printf("Message Type : %c\n", s.MessageType)
@@ -57,7 +55,7 @@ func DecodeSecurityDirectory(msg []byte) {
 	fmt.Printf("Price Type   : %c\n", s.PriceType)
 	fmt.Printf("ISIN         : %s\n", s.ISIN)
 	fmt.Printf("SecurityCode : %s\n", s.SecurityCode)
-	fmt.Printf("Currency :%c\n", s.Currency)
+	fmt.Printf("Currency :%s\n", s.Currency)
 	fmt.Printf("Group    :%s\n", s.Group)
 	fmt.Printf("MinimumQuantity: %d\n", s.MinimumQuantity)
 	fmt.Printf("QuantityTableID: %d\n", s.QuantityTableID)
@@ -77,6 +75,8 @@ func Decode(packet []byte) {
 		return
 	}
 	switch packet[0] {
+	case 'T':
+		DecodeTime(packet)
 
 	case 'R':
 		DecodeSecurityDirectory(packet)

@@ -3,6 +3,7 @@ package handler
 import (
 	"bytes"
 	"encoding/binary"
+	"fmt"
 )
 
 // fixed left-justifies s in a size-byte field, space-padded on the right.
@@ -70,6 +71,6 @@ func LoginBuilder(
 		packet[0:2],
 		uint16(len(packet)-2),
 	)
-
+	fmt.Printf("%X\n", packet)
 	return packet
 }

@@ -35,15 +35,14 @@ func HandlePacket(packet []byte) {
 		fmt.Println("Server Heartbeat")
 
 	case 'S':
-		it := packet[1:]
-
-		switch it[0] {
-		case 'R':
-			length := binary.BigEndian.Uint16(it)
-			fmt.Println("itch len :", string(it[0]), length)
-			itch.Decode(it)
-		}
-		fmt.Println("Sequenced Data")
+		fmt.Println("Sequenced Data->")
+		itch.Decode(packet[1:])
+	case 'R':
+		length := binary.BigEndian.Uint16(packet)
+		fmt.Println("itch len :", string(packet), length)
+		itch.Decode(packet)
+	case 'A':
+		fmt.Printf("ADD ORDER ::::::\n %X\n", packet[1:])
 
 	case 'U':
 		fmt.Println("Unsequenced Data")
