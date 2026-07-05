@@ -16,3 +16,6 @@ func ReadUint32(b []byte) uint32 {
 func ReadUint64(b []byte) uint64 {
 	return binary.BigEndian.Uint64(b)
 }
+func DecodeTime(msg []byte) uint32 {
+	return binary.BigEndian.Uint32(msg)
+}

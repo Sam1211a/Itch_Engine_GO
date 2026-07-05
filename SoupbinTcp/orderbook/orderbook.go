@@ -15,7 +15,7 @@ func New() *Orderbook {
 	}
 }
 
-func (ob Orderbook) AddOrder(order model.Order) {
+func (ob *Orderbook) AddOrder(order model.Order) {
 	ob.Orders[order.OrderId] = order
 	fmt.Println("Order added :", order.OrderId)
 }
@@ -35,7 +35,6 @@ func (ob *Orderbook) Print() {
 		fmt.Printf(
 			"ID=%d Symbol=%s Price=%d Qty=%d Side=%c\n",
 			id,
-			order.Symbol,
 			order.Price,
 			order.Qty,
 			order.Side,

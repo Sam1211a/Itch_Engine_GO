@@ -12,6 +12,6 @@ func ParseExecute(packet []byte) (*model.ExecuteOrder, error) {
 	}
 	order := &model.ExecuteOrder{}
 	order.OrderId = binary.BigEndian.Uint64(packet[5:13])
-	order.Qty = binary.BigEndian.Uint32(packet[13:17])
+	order.Qty = binary.BigEndian.Uint64(packet[13:17])
 	return order, nil
 }

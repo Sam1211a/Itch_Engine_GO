@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"soupbintcp/engine"
 	"soupbintcp/itch"
 )
 
@@ -28,7 +29,7 @@ func ReadPacket(conn net.Conn) ([]byte, error) {
 
 	return body, nil
 }
-func HandlePacket(packet []byte) {
+func HandlePacket(packet []byte, eng *engine.Engine) {
 	switch packet[0] {
 
 	case 'H':
@@ -36,13 +37,7 @@ func HandlePacket(packet []byte) {
 
 	case 'S':
 		fmt.Println("Sequenced Data->")
-		itch.Decode(packet[1:])
-	case 'R':
-		length := binary.BigEndian.Uint16(packet)
-		fmt.Println("itch len :", string(packet), length)
-		itch.Decode(packet)
-	case 'A':
-		fmt.Printf("ADD ORDER ::::::\n %X\n", packet[1:])
+		itch.Decode(packet[1:], eng)
 
 	case 'U':
 		fmt.Println("Unsequenced Data")

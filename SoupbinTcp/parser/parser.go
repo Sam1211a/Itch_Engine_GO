@@ -14,9 +14,9 @@ func Parse(packet []byte) (*model.Order, error) {
 	order := &model.Order{}
 	order.OrderId = binary.BigEndian.Uint64(packet[5:13])
 	order.Price = binary.BigEndian.Uint32(packet[13:17])
-	order.Qty = binary.BigEndian.Uint32(packet[17:21])
+	order.Qty = binary.BigEndian.Uint64(packet[17:21])
 	order.Side = packet[21]
-	order.Symbol = string(packet[22:30])
+	// order.Symbol = string(packet[22:30])
 	return order, nil
 
 	// fmt.Println("========== ADD ORDER ==========")

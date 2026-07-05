@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net"
+	"soupbintcp/engine"
 	"soupbintcp/network"
 	"soupbintcp/protocol"
 )
@@ -17,7 +18,7 @@ func main() {
 	defer conn.Close()
 	fmt.Println("tcp Connected")
 	network.Connect(conn)
-
+	eng := engine.New()
 	for {
 		packet, err := protocol.ReadPacket(conn)
 		if err != nil {
@@ -25,6 +26,6 @@ func main() {
 			return
 		}
 		// fmt.Printf("RX: % X\n", packet)
-		protocol.HandlePacket(packet)
+		protocol.HandlePacket(packet, eng)
 	}
 }
