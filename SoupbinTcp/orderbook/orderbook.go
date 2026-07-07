@@ -17,7 +17,7 @@ func New() *Orderbook {
 
 func (ob *Orderbook) AddOrder(order model.Order) {
 	ob.Orders[order.OrderId] = order
-	fmt.Println("Order added :", order.OrderId)
+	// fmt.Println("Order added :", order.OrderId)
 }
 
 func (ob *Orderbook) Get(OrderID uint64) (model.Order, bool) {
@@ -31,13 +31,14 @@ func (ob *Orderbook) CancelOrder(OrderID uint64) {
 func (ob *Orderbook) Print() {
 	fmt.Println("----------- ORDER BOOK -----------")
 
-	for id, order := range ob.Orders {
+	for key, order := range ob.Orders {
 		fmt.Printf(
-			"ID=%d Symbol=%s Price=%d Qty=%d Side=%c\n",
-			id,
-			order.Price,
-			order.Qty,
+			"Key=%d OrderID=%d Symbol=%s Side=%c Qty=%d Price=%d\n", key,
+			order.OrderId,
+			order.Symbol,
 			order.Side,
+			order.Qty,
+			order.Price,
 		)
 	}
 

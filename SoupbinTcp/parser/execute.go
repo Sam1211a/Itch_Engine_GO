@@ -7,11 +7,20 @@ import (
 )
 
 func ParseExecute(packet []byte) (*model.ExecuteOrder, error) {
-	if len(packet) < 17 {
-		return nil, fmt.Errorf("invalid Executed packet")
+
+	if len(packet) < 29 {
+		return nil, fmt.Errorf("invalid execute packet")
 	}
-	order := &model.ExecuteOrder{}
-	order.OrderId = binary.BigEndian.Uint64(packet[5:13])
-	order.Qty = binary.BigEndian.Uint64(packet[13:17])
-	return order, nil
+
+	exe := &model.ExecuteOrder{}
+
+	exe.Timestamp = binary.BigEndian.Uint32(packet[1:5])
+
+	exe.OrderId = binary.BigEndian.Uint64(packet[5:13])
+
+	exe.Qty = binary.BigEndian.Uint64(packet[13:21])
+
+	exe.MatchNumber = binary.BigEndian.Uint64(packet[21:29])
+
+	return exe, nil
 }

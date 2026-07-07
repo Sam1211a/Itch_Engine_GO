@@ -6,6 +6,7 @@ import (
 )
 
 func Decode(packet []byte, eng *engine.Engine) {
+	// fmt.Printf("ITCH Type=%c Length=%d\n", packet[0], len(packet))
 
 	if len(packet) == 0 {
 		return
@@ -25,13 +26,15 @@ func Decode(packet []byte, eng *engine.Engine) {
 	case 'A':
 		AddOrder(packet, eng)
 	case 'D':
-		fmt.Println("DecodeDeleteorder Packet")
+		DeleteOrder(packet, eng)
+	case 'U':
+		ReplaceOrder(packet, eng)
 
 	case 'E':
 		ExecuteOrder(packet, eng)
 
 	case 'P':
-		fmt.Println("Trade")
+		TradeOrder(packet, eng)
 
 	default:
 		fmt.Printf("Unknown ITCH Message: %c\n", packet[0])

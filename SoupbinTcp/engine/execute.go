@@ -11,6 +11,11 @@ func (e *Engine) HandleExec(exec *model.ExecuteOrder) {
 		fmt.Println("Order not found:", exec.OrderId)
 		return
 	}
+	fmt.Printf(
+		"Execute Update -> OrderID=%d Qty=%d\n",
+		order.OrderId,
+		order.Qty,
+	)
 	if order.Qty <= exec.Qty {
 		e.Book.CancelOrder(exec.OrderId)
 		fmt.Println("Order Fully Executed")

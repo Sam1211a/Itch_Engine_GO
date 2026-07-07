@@ -10,11 +10,11 @@ type Order struct {
 	Symbol    string
 }
 type ExecuteOrder struct {
+	Timestamp uint32
+
 	OrderId uint64
-	Qty     uint64
-}
-type ReplaceOrder struct {
-	OrderId uint64
-	Price   uint32
-	Qty     uint32
+
+	Qty uint64
+
+	MatchNumber uint64
 }

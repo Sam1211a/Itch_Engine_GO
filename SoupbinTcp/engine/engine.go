@@ -16,3 +16,7 @@ func New() *Engine {
 		Securities: make(map[uint32]model.SecurityDirectory),
 	}
 }
+
+func (e *Engine) PrintBook() {
+	e.Book.Print()
+}

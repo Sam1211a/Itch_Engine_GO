@@ -6,19 +6,31 @@ import (
 	"io"
 	"net"
 	"soupbintcp/handler"
+
+	"time"
 	// "github.com/redis/go-redis/v9/helper"
 )
 
-func Connect(conn net.Conn) net.Conn {
+func (c *Client) Connect() error {
+	conn, err := net.Dial("tcp", Host)
+	if err != nil {
+		return fmt.Errorf("Failed tcp connection")
+	}
+	c.Conn = conn
+	fmt.Println("tcp Connected")
+	return nil
+}
+
+func (c *Client) Login() error {
 
 	login := handler.LoginBuilder(
-		"ITFIC1",
-		"password",
-		"",
-		"1",
+		Username,
+		Password,
+		Session,
+		Sequence,
 	)
 	fmt.Printf("% X\n", login)
-	ln, err := conn.Write(login)
+	ln, err := c.Conn.Write(login)
 	if err != nil {
 		fmt.Println("login Failed")
 		return nil
@@ -30,7 +42,7 @@ func Connect(conn net.Conn) net.Conn {
 	fmt.Printf("Sequence: [%s]\n", login[29:49])
 	fmt.Println("Login request sent")
 	header := make([]byte, 2)
-	_, err = io.ReadFull(conn, header)
+	_, err = io.ReadFull(c.Conn, header)
 	if err != nil {
 		fmt.Println("Header Error:", err)
 		return nil
@@ -40,7 +52,7 @@ func Connect(conn net.Conn) net.Conn {
 	fmt.Println("Lenght: ", length)
 
 	body := make([]byte, length)
-	_, err = io.ReadFull(conn, body)
+	_, err = io.ReadFull(c.Conn, body)
 	if err != nil {
 		fmt.Println("Body Error:", err)
 		return nil
@@ -53,6 +65,9 @@ func Connect(conn net.Conn) net.Conn {
 	case 'A':
 		session := string(body[1:11])
 		sequence := string(body[11:31])
+		Mu.Lock()
+		LastHeartbeat = time.Now()
+		Mu.Unlock()
 		fmt.Printf("Session  : [%s]\n", session)
 		fmt.Printf("sequence  : [%s]\n", sequence)
 		fmt.Println("✅ Login Accepted")
@@ -62,6 +77,9 @@ func Connect(conn net.Conn) net.Conn {
 
 	case 'H':
 		fmt.Println("Server Heartbeat")
+		Mu.Lock()
+		LastHeartbeat = time.Now()
+		Mu.Unlock()
 
 	case 'S':
 		fmt.Println("Sequenced Data")
@@ -69,5 +87,5 @@ func Connect(conn net.Conn) net.Conn {
 	default:
 		fmt.Printf("Unknown Packet : %c\n", body[0])
 	}
-	return conn
+	return nil
 }
