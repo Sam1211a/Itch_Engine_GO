@@ -1,21 +1,17 @@
 package network
 
 import (
+	"context"
 	"fmt"
-	"net"
 	"soupbintcp/engine"
 	"soupbintcp/protocol"
 	"time"
 )
 
-type Client struct {
-	Conn net.Conn
-	Eng  *engine.Engine
-}
-
 func NewClient(eng *engine.Engine) *Client {
 	return &Client{
-		Eng: eng,
+		Eng:      eng,
+		Sequence: 1,
 	}
 }
 func (c *Client) ReadLoop() error {
@@ -25,11 +21,18 @@ func (c *Client) ReadLoop() error {
 			return err
 		}
 		protocol.HandlePacket(packet, c.Eng)
+
 	}
 }
 
 func (c *Client) Close() {
+	if c.Cancel != nil {
+		c.Cancel()
+		c.Cancel = nil
+	}
+	c.Ctx = nil
 	if c.Conn != nil {
+		fmt.Println("Closing Connection...")
 		c.Conn.Close()
 		c.Conn = nil
 	}
@@ -54,16 +57,17 @@ func (c *Client) Run() {
 
 			continue
 		}
-		go c.SendHeartbeat()
+		c.Ctx, c.Cancel = context.WithCancel(context.Background())
+		go c.SendHeartbeatLoop()
 
-		StartMonitor()
+		// StartMonitor()
 
 		err = c.ReadLoop()
 
 		fmt.Println("ReadLoop Exit :", err)
 
 		c.Close()
-
+		fmt.Println("Reconnecting in 5 seconds...")
 		time.Sleep(5 * time.Second)
 
 	}

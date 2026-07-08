@@ -2,6 +2,7 @@ package network
 
 import (
 	"fmt"
+	"soupbintcp/model"
 	"time"
 )
 
@@ -9,9 +10,9 @@ func StartMonitor() {
 	go func() {
 		for {
 			time.Sleep(5 * time.Second)
-			Mu.Lock()
-			last := LastHeartbeat
-			Mu.Unlock()
+			model.Mu.Lock()
+			last := model.LastHeartbeat
+			model.Mu.Unlock()
 			if last.IsZero() {
 				continue
 			}

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"soupbintcp/engine"
 	"soupbintcp/itch"
+	"soupbintcp/model"
+	"time"
 )
 
 func HandlePacket(packet []byte, eng *engine.Engine) {
@@ -11,10 +13,14 @@ func HandlePacket(packet []byte, eng *engine.Engine) {
 	switch packet[0] {
 
 	case 'H':
-		// fmt.Println("Server Heartbeat")
+		model.Mu.Lock()
+		model.LastHeartbeat = time.Now()
+		model.Mu.Unlock()
+		fmt.Println("Server Heartbeat")
 
 	case 'S':
 		// fmt.Println("Sequenced Data->")
+
 		itch.Decode(packet[1:], eng)
 
 	case 'U':

@@ -6,6 +6,8 @@ import (
 	"io"
 	"net"
 	"soupbintcp/handler"
+	"soupbintcp/model"
+	"strconv"
 
 	"time"
 	// "github.com/redis/go-redis/v9/helper"
@@ -22,12 +24,12 @@ func (c *Client) Connect() error {
 }
 
 func (c *Client) Login() error {
-
+	// c.Sequence = 1
 	login := handler.LoginBuilder(
 		Username,
 		Password,
 		Session,
-		Sequence,
+		strconv.FormatUint(c.Sequence, 10),
 	)
 	fmt.Printf("% X\n", login)
 	ln, err := c.Conn.Write(login)
@@ -65,9 +67,9 @@ func (c *Client) Login() error {
 	case 'A':
 		session := string(body[1:11])
 		sequence := string(body[11:31])
-		Mu.Lock()
-		LastHeartbeat = time.Now()
-		Mu.Unlock()
+		model.Mu.Lock()
+		model.LastHeartbeat = time.Now()
+		model.Mu.Unlock()
 		fmt.Printf("Session  : [%s]\n", session)
 		fmt.Printf("sequence  : [%s]\n", sequence)
 		fmt.Println("✅ Login Accepted")
@@ -77,9 +79,9 @@ func (c *Client) Login() error {
 
 	case 'H':
 		fmt.Println("Server Heartbeat")
-		Mu.Lock()
-		LastHeartbeat = time.Now()
-		Mu.Unlock()
+		model.Mu.Lock()
+		model.LastHeartbeat = time.Now()
+		model.Mu.Unlock()
 
 	case 'S':
 		fmt.Println("Sequenced Data")

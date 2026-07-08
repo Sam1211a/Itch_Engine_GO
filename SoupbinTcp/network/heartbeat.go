@@ -2,6 +2,8 @@ package network
 
 import (
 	"encoding/binary"
+	"fmt"
+	"time"
 )
 
 func (c *Client) SendHeartbeat() error {
@@ -10,4 +12,22 @@ func (c *Client) SendHeartbeat() error {
 	packet[2] = 'R'
 	_, err := c.Conn.Write(packet)
 	return err
+}
+
+func (c *Client) SendHeartbeatLoop() {
+	ticker := time.NewTicker(time.Second)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-c.Ctx.Done():
+			fmt.Println("Heartbeat Loop Exit")
+			return
+		case <-ticker.C:
+			err := c.SendHeartbeat()
+			if err != nil {
+				fmt.Println("SendHeartbeat Failed")
+				return
+			}
+		}
+	}
 }
