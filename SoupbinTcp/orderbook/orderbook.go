@@ -25,7 +25,7 @@ func (ob *Orderbook) Get(OrderID uint64) (model.Order, bool) {
 	return order, ok
 }
 func (ob *Orderbook) CancelOrder(OrderID uint64) {
-	// fmt.Println("Order Cancel: ", ob.Orders[OrderID].OrderId)
+	fmt.Println("Order Cancel: ", ob.Orders[OrderID].OrderId)
 	delete(ob.Orders, OrderID)
 }
 func (ob *Orderbook) Print() {

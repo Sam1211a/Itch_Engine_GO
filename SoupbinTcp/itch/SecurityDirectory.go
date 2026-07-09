@@ -2,8 +2,10 @@ package itch
 
 import (
 	"encoding/binary"
+	"fmt"
 
 	"soupbintcp/model"
+	"soupbintcp/ulitis"
 )
 
 func DecodeSecurityDirectory(msg []byte) *model.SecurityDirectory {
@@ -41,21 +43,21 @@ func DecodeSecurityDirectory(msg []byte) *model.SecurityDirectory {
 
 	s.MaturityDate = ReadUint32(msg[163:167])
 
-	// fmt.Printf("Timestamp: %+v\n", msg[1:5])
-	// fmt.Printf("Message Type : %c\n", s.MessageType)
-	// fmt.Printf("Timestamp    : %d\n", s.Timestamp)
-	// fmt.Printf("Orderbook    : %d\n", s.Orderbook)
-	// fmt.Printf("Price Type   : %c\n", s.PriceType)
-	// fmt.Printf("ISIN         : %s\n", s.ISIN)
-	// fmt.Printf("SecurityCode : %s\n", s.SecurityCode)
-	// fmt.Printf("Currency :%s\n", s.Currency)
-	// fmt.Printf("Group    :%s\n", s.Group)
-	// fmt.Printf("MinimumQuantity: %d\n", s.MinimumQuantity)
-	// fmt.Printf("QuantityTableID: %d\n", s.QuantityTableID)
-	// fmt.Printf("Market Type  : %c\n", s.MarketType)
-	// fmt.Printf("Company ID   : %d\n", s.CompanyID)
-	// fmt.Printf("Listing Type : %c\n", s.ListingType)
-	// fmt.Printf("Security Name: %s\n", s.SecurityName)
+	fmt.Printf("Timestamp: %s\n", ulitis.ITCHTimeString(s.Timestamp))
+	fmt.Printf("Message Type : %c\n", s.MessageType)
+	fmt.Printf("Timestamp    : %d\n", s.Timestamp)
+	fmt.Printf("Orderbook    : %d\n", s.Orderbook)
+	fmt.Printf("Price Type   : %c\n", s.PriceType)
+	fmt.Printf("ISIN         : %s\n", s.ISIN)
+	fmt.Printf("SecurityCode : %s\n", s.SecurityCode)
+	fmt.Printf("Currency :%s\n", s.Currency)
+	fmt.Printf("Group    :%s\n", s.Group)
+	fmt.Printf("MinimumQuantity: %d\n", s.MinimumQuantity)
+	fmt.Printf("QuantityTableID: %d\n", s.QuantityTableID)
+	fmt.Printf("Market Type  : %c\n", s.MarketType)
+	fmt.Printf("Company ID   : %d\n", s.CompanyID)
+	fmt.Printf("Listing Type : %c\n", s.ListingType)
+	fmt.Printf("Security Name: %s\n", s.SecurityName)
 
 	// fmt.Println("Timestamp :", s.Timestamp)
 	return s

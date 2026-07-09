@@ -2,7 +2,9 @@ package engine
 
 import (
 	"fmt"
+
 	"soupbintcp/model"
+	"soupbintcp/ulitis"
 )
 
 func (e *Engine) HandleExec(exec *model.ExecuteOrder) {
@@ -11,11 +13,12 @@ func (e *Engine) HandleExec(exec *model.ExecuteOrder) {
 		fmt.Println("Order not found:", exec.OrderId)
 		return
 	}
-	// fmt.Printf(
-	// 	"Execute Update -> OrderID=%d Qty=%d\n",
-	// 	order.OrderId,
-	// 	order.Qty,
-	// )
+	fmt.Printf(
+		"Execute Update -> OrderID = %d Qty = %d Timestamp = %s\n",
+		order.OrderId,
+		order.Qty,
+		ulitis.ITCHTimeString(exec.Timestamp),
+	)
 	if order.Qty <= exec.Qty {
 		e.Book.CancelOrder(exec.OrderId)
 		fmt.Println("Order Fully Executed")

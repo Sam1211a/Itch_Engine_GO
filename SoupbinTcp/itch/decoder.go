@@ -13,7 +13,7 @@ func Decode(packet []byte, eng *engine.Engine) {
 	}
 	switch packet[0] {
 	case 'T':
-		DecodeTime(packet)
+		DecodeTime(packet[1:5])
 
 	case 'R':
 		sec := DecodeSecurityDirectory(packet)

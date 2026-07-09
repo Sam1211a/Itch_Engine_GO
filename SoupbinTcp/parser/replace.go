@@ -17,12 +17,12 @@ func ParseReplace(packet []byte) (*model.ReplaceOrder, error) {
 	replace.Qty = binary.BigEndian.Uint64(packet[21:29])
 	replace.Price = binary.BigEndian.Uint32(packet[29:33])
 	replace.Yield = binary.BigEndian.Uint32(packet[33:37])
-	// fmt.Printf(
-	// 	"Replace Parsed -> Old=%d New=%d Qty=%d Price=%d \n",
-	// 	replace.OriginalOrder,
-	// 	replace.NewOrder,
-	// 	replace.Qty,
-	// 	replace.Price,
-	// )
+	fmt.Printf(
+		"Replace Parsed -> Old=%d New=%d Qty=%d Price=%d \n",
+		replace.OriginalOrder,
+		replace.NewOrder,
+		replace.Qty,
+		replace.Price,
+	)
 	return replace, nil
 }
