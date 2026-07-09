@@ -8,8 +8,8 @@ import (
 func main() {
 
 	eng := engine.New()
-	network.StartMonitor()
 	client := network.NewClient(eng)
+
 	client.Run()
 	// conn, err := net.Dial("tcp", network.Host)
 	// if err != nil {

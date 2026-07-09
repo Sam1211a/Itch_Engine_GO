@@ -8,6 +8,7 @@ import (
 	"soupbintcp/handler"
 	"soupbintcp/model"
 	"strconv"
+	"strings"
 
 	"time"
 	// "github.com/redis/go-redis/v9/helper"
@@ -28,14 +29,17 @@ func (c *Client) Login() error {
 	login := handler.LoginBuilder(
 		Username,
 		Password,
-		Session,
+		c.Session,
 		strconv.FormatUint(c.Sequence, 10),
 	)
-	fmt.Printf("% X\n", login)
+	fmt.Println("Session:- ", c.Session)
+	fmt.Println("Sequence:- ", strconv.FormatUint(c.Sequence, 10))
+	// fmt.Printf("% X\n", login)
 	ln, err := c.Conn.Write(login)
 	if err != nil {
 		fmt.Println("login Failed")
-		return nil
+		c.Close()
+		return err
 	}
 	fmt.Println("Bytes sent: ", ln)
 	fmt.Printf("Username: [%s]\n", login[3:9])
@@ -46,8 +50,7 @@ func (c *Client) Login() error {
 	header := make([]byte, 2)
 	_, err = io.ReadFull(c.Conn, header)
 	if err != nil {
-		fmt.Println("Header Error:", err)
-		return nil
+		return fmt.Errorf("Header Error:")
 	}
 
 	length := binary.BigEndian.Uint16(header)
@@ -56,8 +59,8 @@ func (c *Client) Login() error {
 	body := make([]byte, length)
 	_, err = io.ReadFull(c.Conn, body)
 	if err != nil {
-		fmt.Println("Body Error:", err)
-		return nil
+		return fmt.Errorf("Body Error:")
+
 	}
 
 	fmt.Printf("Body = % X\n", body)
@@ -65,20 +68,26 @@ func (c *Client) Login() error {
 	switch body[0] {
 
 	case 'A':
-		session := string(body[1:11])
-		sequence := string(body[11:31])
+		session := strings.TrimSpace(string(body[1:11]))
+		sequence := strings.TrimSpace(string(body[11:31]))
+		c.Session = session
+		seq, err := strconv.ParseUint(sequence, 10, 64)
+		if err == nil {
+			c.Sequence = seq
+		}
 		model.Mu.Lock()
 		model.LastHeartbeat = time.Now()
 		model.Mu.Unlock()
-		fmt.Printf("Session  : [%s]\n", session)
-		fmt.Printf("sequence  : [%s]\n", sequence)
+		fmt.Printf("Session  : [%s]\n", c.Session)
+		fmt.Printf("sequence  : [%d]\n", c.Sequence)
 		fmt.Println("✅ Login Accepted")
 
 	case 'J':
 		fmt.Printf("❌ Login Rejected : %c\n", body[1])
+		return fmt.Errorf("Login Rejected")
 
 	case 'H':
-		fmt.Println("Server Heartbeat")
+		// fmt.Println("Server Heartbeat")
 		model.Mu.Lock()
 		model.LastHeartbeat = time.Now()
 		model.Mu.Unlock()
@@ -87,7 +96,7 @@ func (c *Client) Login() error {
 		fmt.Println("Sequenced Data")
 
 	default:
-		fmt.Printf("Unknown Packet : %c\n", body[0])
+		return fmt.Errorf("Unknown Packet : %c\n", body[0])
 	}
 	return nil
 }

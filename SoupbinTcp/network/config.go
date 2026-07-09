@@ -12,6 +12,7 @@ type Client struct {
 	Ctx      context.Context
 	Cancel   context.CancelFunc
 	Sequence uint64
+	Session  string
 }
 
 const (

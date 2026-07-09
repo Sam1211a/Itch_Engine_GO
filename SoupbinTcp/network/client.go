@@ -12,6 +12,7 @@ func NewClient(eng *engine.Engine) *Client {
 	return &Client{
 		Eng:      eng,
 		Sequence: 1,
+		Session:  " ",
 	}
 }
 func (c *Client) ReadLoop() error {
@@ -19,6 +20,11 @@ func (c *Client) ReadLoop() error {
 		packet, err := protocol.ReadPacket(c.Conn)
 		if err != nil {
 			return err
+		}
+		if len(packet) > 0 && packet[0] == 'S' {
+
+			c.Sequence++
+			fmt.Println("Sequence:---> ", c.Sequence)
 		}
 		protocol.HandlePacket(packet, c.Eng)
 
@@ -60,7 +66,7 @@ func (c *Client) Run() {
 		c.Ctx, c.Cancel = context.WithCancel(context.Background())
 		go c.SendHeartbeatLoop()
 
-		// StartMonitor()
+		c.StartMonitor()
 
 		err = c.ReadLoop()
 

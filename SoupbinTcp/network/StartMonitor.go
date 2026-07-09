@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func StartMonitor() {
+func (c *Client) StartMonitor() {
 	go func() {
 		for {
 			time.Sleep(5 * time.Second)
@@ -18,6 +18,7 @@ func StartMonitor() {
 			}
 			if time.Since(last) > 15*time.Second {
 				fmt.Println("Heartbeat Timeout")
+				c.Close()
 				return
 			}
 		}

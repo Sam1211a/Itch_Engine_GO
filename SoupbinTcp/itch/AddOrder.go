@@ -1,7 +1,6 @@
 package itch
 
 import (
-	"fmt"
 	"soupbintcp/engine"
 	"soupbintcp/parser"
 )
@@ -14,15 +13,15 @@ func AddOrder(msg []byte, eng *engine.Engine) {
 		return
 	}
 	eng.HandleAdd(order)
-	fmt.Printf(
-		"###########################->ADD ORDER<-###################\n OrderID=%d BookID=%d Symbol=%s Side=%c Qty=%d Price=%d Timestamp=%d\n ###########################################################\n",
-		order.OrderId,
-		order.BookID,
-		order.Symbol,
-		order.Side,
-		order.Qty,
-		order.Price,
-		order.Timestamp,
-	)
+	// fmt.Printf(
+	// 	"###########################->ADD ORDER<-###################\n OrderID=%d BookID=%d Symbol=%s Side=%c Qty=%d Price=%d Timestamp=%d\n ###########################################################\n",
+	// 	order.OrderId,
+	// 	order.BookID,
+	// 	order.Symbol,
+	// 	order.Side,
+	// 	order.Qty,
+	// 	order.Price,
+	// 	order.Timestamp,
+	// )
 
 }

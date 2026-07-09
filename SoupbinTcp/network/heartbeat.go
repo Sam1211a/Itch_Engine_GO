@@ -21,11 +21,13 @@ func (c *Client) SendHeartbeatLoop() {
 		select {
 		case <-c.Ctx.Done():
 			fmt.Println("Heartbeat Loop Exit")
+			c.Close()
 			return
 		case <-ticker.C:
 			err := c.SendHeartbeat()
 			if err != nil {
 				fmt.Println("SendHeartbeat Failed")
+				c.Close()
 				return
 			}
 		}
