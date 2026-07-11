@@ -10,5 +10,5 @@ func DeleteOrder(msg []byte, eng *engine.Engine) {
 	if err != nil {
 		return
 	}
-	eng.HandleDelete(del)
+	eng.HandleDelete(del.OrderId)
 }
